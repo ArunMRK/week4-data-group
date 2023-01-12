@@ -1,6 +1,5 @@
+dash
 python-dotenv
 psycopg2-binary
 boto3
 pandas
-sqlalchemy
-flask-sqlalchemy
