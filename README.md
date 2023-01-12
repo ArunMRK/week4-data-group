@@ -9,3 +9,5 @@ Quick README on what to do:
 - smaller functions that do individual tasks i.e. converting stuff to datetimes, etc.
 - scrubbing.ipynb is just the notebook I practised the transforming on, nothing too important
 - Dockerfile is used to upload to the production schema table: week4_alex_production.production_ecommerce
+
+- app.py is the dashboard currently only working locally but works! 
