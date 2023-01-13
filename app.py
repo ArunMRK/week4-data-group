@@ -1,10 +1,10 @@
-from dash import Dash, dcc, html, Input, Output
+from dash import Dash, dcc, html, Input, Output, dash
 import plotly.express as px
 import pandas as pd
 import psycopg2
 import dotenv, os
 
-app = Dash(__name__)
+app = dash.Dash(__name__)
 
 colours = {
     'background_page': '#1F0660',
@@ -15,11 +15,11 @@ colours = {
 
 dotenv.load_dotenv(override = True)
 
-AWS_ENDPOINT = os.environ['AWS_ENDPOINT']
-AWS_PORT = os.environ['AWS_PORT']
-AWS_USERNAME = os.environ['AWS_USERNAME']
-AWS_PASSWORD = os.environ['AWS_PASSWORD']
-AWS_DATABASE = os.environ['AWS_DATABASE']
+AWS_ENDPOINT = 'sigma-data-engineering-instance-1.c1i5dspnearp.eu-west-2.rds.amazonaws.com'
+AWS_PORT = '5432'
+AWS_USERNAME = 'alex'
+AWS_PASSWORD = 'sigmastudent'
+AWS_DATABASE = 'postgres'
 
 AWS_PRODUCTION_SCHEMA = 'week4_alex_production'
 AWS_PRODUCTION_TABLE = 'production_ecommerce'
@@ -119,79 +119,74 @@ context = {}
 df = lambda_handler(event, context)
 
 app.layout = html.Div(
-    style={'backgroundColor': colours['background_page']},
     children=[
-        html.H1(
-            children="Dashboard summary page - Toothbrush XYZ",
-            style={
-                'textAlign': 'center',
-                'color': colours['title_text']
-            }
-        ),
-        html.H2(
-            children='Quick sentence - This page highlights all key findings',
-            style={
-                'textAlign': 'center',
-                'color': colours['title_text']
-            }
-        ),
-        html.Div(
-            children=[
-                html.Div(
-                    style={'backgroundColor': colours['background_page']},
-                    children = [
-                        dcc.Graph(
-                            id='age-distribution',
-                            style={
-                                'display': 'inline-block'
-                            }
-                        ),
-                        dcc.Graph(
-                            id='time-distribution',
-                            style={
-                                'display': 'inline-block'
-                            }
-                        )
-                    ]
-                ),
-                html.Div(
-                    style={'backgroundColor': colours['background_page']},
-                    children=[
-                        dcc.Dropdown(
-                            ["Toothbrush 2000", "Toothbrush 4000", "Both"],
-                            "Toothbrush 2000",
-                            id="toothbrush-model"
-                        )
-                    ]
-                )    
-            ]
-        ),
+        html.Div([
+            html.H2("Toothbrush XYZ"),
+            html.Img(src="/assets/bigtoothbrush.png"),
+            html.Div(
+                html.H3('Statistics on sales of Toothbrush 2000 & Toothbrush 4000')
+            )
+        ], className="banner"),
+    
         
-        html.Div(
-            style={'backgroundColor': colours['background_page']},
-            children=[
-                html.Div(
-                    [
-                        dcc.Dropdown(
-                            df['toothbrush_type'].unique(),
-                            "Toothbrush 2000",
-                            id='data-input'
-                        ),
-                    ]
-                ),
-            dcc.Graph(id='graph-output'),
-        ]),
-        html.Div(
-            children=[
-                html.Div(
-                    children = [
 
-                    ]
+    html.Div([ 
+        html.H1([
+            dcc.Dropdown(
+                ["Toothbrush 2000", "Toothbrush 4000", "Both"],
+                "Toothbrush 2000",
+                id="toothbrush-model"
+            )
+        ], style={"width": "25%",
+        "font-size": 'medium'}),
+        html.Div(
+            html.H3('Statistics on sales of {}'), className="info"
+        )]),
+        
+    html.Div([
+            html.Div( 
+                dcc.Graph(
+                    id='age-distribution',
+                    style={
+                        'display': 'inline-block'
+                    }
                 )
-            ]
-        )
-    ]
-)
+                ,style={'width': '49%', 'display': 'inline-block'}),
+        html.Div(
+                    dcc.Graph(
+                    id='time-distribution',
+                    style={
+                        'display': 'inline-block'
+                    }
+                )
+        ,style={'width': '49%', 'display': 'inline-block'}), 
+    ])
+,
+
+    html.Div(
+        children=[
+            html.Div(
+                [
+                html.H1([
+                    dcc.Dropdown(
+                        df['toothbrush_type'].unique(),
+                        "Toothbrush 2000",
+                        id='data-input'
+                    ),
+                    ], style={"width": "25%"}, className='right'),
+            
+                ]
+            ),
+            html.Div(
+                html.H3('Statistics on sales of {}'), className="info"
+        ),
+
+        dcc.Graph(id='graph-output'),
+    ])])
+
+app.css.append_css({
+        "external_url":"http://codepen.io/chriddyp/pen/bWLwgP.css"
+    })
 
 @app.callback(
     Output("age-distribution", "figure"),
@@ -200,10 +195,10 @@ app.layout = html.Div(
 def change_model_age(input_value, dataframe = df):
     condensed_df = age_distribution(dataframe, input_value)
     if input_value == "Toothbrush 2000":
-        return px.bar(condensed_df, x="age_range", y="order_date", title="Test")
+        return px.bar(condensed_df, x="age_range", y="order_date", title="Age Range")
     elif input_value == "Both":
-        return px.bar(condensed_df, x="age_range", y="order_date")
-    return px.bar(condensed_df, x="age_range", y="order_date")
+        return px.bar(condensed_df, x="age_range", y="order_date", title="Age Range")
+    return px.bar(condensed_df, x="age_range", y="order_date", title="Age Range")
 
 @app.callback(
     Output("time-distribution", "figure"),
@@ -212,10 +207,10 @@ def change_model_age(input_value, dataframe = df):
 def change_model_time(input_value, dataframe = df):
     condensed_df = time_distribution(dataframe, input_value)
     if input_value == "Toothbrush 2000" or input_value == "Both":
-        return px.bar(condensed_df, x="time_range", y="order_date")
+        return px.bar(condensed_df, x="time_range", y="order_date", title="Time Range")
     elif input_value == "Both":
-        return px.bar(condensed_df, x="age_range", y="order_date")
-    return px.bar(condensed_df, x="time_range", y="order_date")
+        return px.bar(condensed_df, x="age_range", y="order_date", title="Time Range")
+    return px.bar(condensed_df, x="time_range", y="order_date", title="Time Range")
 
 @app.callback(
     Output('graph-output','figure'),
@@ -223,7 +218,7 @@ def change_model_time(input_value, dataframe = df):
 )
 def update_graph(input_value):
     data = toothbrush_data(df, input_value)
-    return px.bar(data, x="customer_age", y="order_quantity", barmode="group")
+    return px.bar(data, x="customer_age", y="order_quantity", barmode="group", title="Order Quantity")
 
 
 if __name__ == "__main__":
