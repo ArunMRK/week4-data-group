@@ -1,0 +1,56 @@
+body {
+  background-color: #d5005b;
+}
+.banner {
+  height: 150px;
+  margin: 0px - 10px 10px;
+  background-color: rgba(5, 170, 192, 255);
+  border-radius: 2px;
+}
+
+.banner h2 {
+  color: white;
+  padding-top: 10px;
+  margin-left: 2%;
+  display: inline-block;
+  font-size: xx-large;
+}
+
+.banner h3 {
+  color: white;
+  padding-left: 5px;
+  margin-left: 2%;
+  display: inline-block;
+  font-size: medium;
+}
+
+.banner Img {
+  position: relative;
+  float: right;
+  right: 10px;
+  height: 150px;
+}
+
+.info {
+  height: 50px;
+  margin: 0px - 10px 10px;
+  background-color: rgba(5, 170, 192, 255);
+  border-radius: 2px;
+}
+
+.info h3 {
+  color: white;
+  padding-left: 5px;
+  margin-left: 2%;
+  display: inline-block;
+  font-size: medium;
+}
+
+.right {
+  position: right;
+  padding-right: 5px;
+  float: right;
+  right: 10px;
+  height: 50px;
+  font-size: medium;
+}
